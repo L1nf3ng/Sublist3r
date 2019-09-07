@@ -153,6 +153,7 @@ class enumratorBase(object):
               'Accept-Encoding': 'gzip',
           }
         self.print_banner()
+        self.proxy ={'http':'http://127.0.0.1:1080', 'https':'https://127.0.0.1:1080'}
 
     def print_(self, text):
         if not self.silent:
@@ -167,10 +168,35 @@ class enumratorBase(object):
     def send_req(self, query, page_no=1):
 
         url = self.base_url.format(query=query, page_no=page_no)
-        try:
-            resp = self.session.get(url, headers=self.headers, timeout=self.timeout)
-        except Exception:
-            resp = None
+#            supported_engines = {
+#                        # with proxy
+#                         'yahoo': YahooEnum,
+#                        # with proxy
+#                         'google': GoogleEnum,
+#                        # with proxy
+#                         'ask': AskEnum,
+#                        # with proxy
+#                         'netcraft': NetcraftEnum,
+#                        # with proxy
+#                         'threatcrowd': ThreatCrowd,
+###############           ########################
+#                         'baidu': BaiduEnum,
+#                         'bing': BingEnum,
+#                         'dnsdumpster': DNSdumpster,
+#                         'virustotal': Virustotal,
+#                         'ssl': CrtSearch,
+#                         'passivedns': PassiveDNS
+#                         }
+        if 'baidu' in self.domain or 'bing' in self.domain or 'dnsdumpster' in self.domain or 'virustotal' in self.domain or 'ssl' in self.domain or 'sublist3r' in self.domain: 
+            try:
+                resp = self.session.get(url, headers=self.headers, timeout=self.timeout)
+            except Exception:
+                resp = None
+        else:
+            try:
+                resp = self.session.get(url, headers=self.headers, timeout=self.timeout, proxies=self.proxy)
+            except Exception:
+                resp = None
         return self.get_response(resp)
 
     def get_response(self, response):
@@ -894,13 +920,18 @@ def main(domain, threads, savefile, ports, silent, verbose, enable_bruteforce, e
         print(Y + "[-] verbosity is enabled, will show the subdomains results in realtime" + W)
 
     supported_engines = {'baidu': BaiduEnum,
+                        # with proxy
                          'yahoo': YahooEnum,
+                        # with proxy
                          'google': GoogleEnum,
                          'bing': BingEnum,
+                        # with proxy
                          'ask': AskEnum,
+                        # with proxy
                          'netcraft': NetcraftEnum,
                          'dnsdumpster': DNSdumpster,
                          'virustotal': Virustotal,
+                        # with proxy
                          'threatcrowd': ThreatCrowd,
                          'ssl': CrtSearch,
                          'passivedns': PassiveDNS
