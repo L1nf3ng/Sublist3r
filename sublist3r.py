@@ -308,7 +308,7 @@ class GoogleEnum(enumratorBaseThreaded):
         try:
             links_list = link_regx.findall(resp)
             for link in links_list:
-                link = re.sub(u'\u203a.*', '', link)
+                link = re.sub(u' \u203a.*', '', link)
                 if not link.startswith('http'):
                     link = "http://" + link
                 subdomain = urlparse.urlparse(link).netloc
