@@ -169,16 +169,13 @@ class enumratorBase(object):
 
         url = self.base_url.format(query=query, page_no=page_no)
 #            supported_engines = {
-#                        # with proxy
+#                        # these are with proxy:
 #                         'yahoo': YahooEnum,
-#                        # with proxy
-#                         'google': GoogleEnum,
-#                        # with proxy
-#                         'ask': AskEnum,
-#                        # with proxy
 #                         'netcraft': NetcraftEnum,
-#                        # with proxy
 #                         'threatcrowd': ThreatCrowd,
+#                        # parse rules changed:
+#                         'google': GoogleEnum,
+#                         'ask': AskEnum,
 ###############           ########################
 #                         'baidu': BaiduEnum,
 #                         'bing': BingEnum,
@@ -187,7 +184,9 @@ class enumratorBase(object):
 #                         'ssl': CrtSearch,
 #                         'passivedns': PassiveDNS
 #                         }
-        if 'baidu' in self.domain or 'bing' in self.domain or 'dnsdumpster' in self.domain or 'virustotal' in self.domain or 'ssl' in self.domain or 'sublist3r' in self.domain: 
+        if 'baidu' in self.domain or 'bing' in self.domain \
+                or 'dnsdumpster' in self.domain or 'virustotal' in self.domain \
+                or 'ssl' in self.domain or 'sublist3r' in self.domain:
             try:
                 resp = self.session.get(url, headers=self.headers, timeout=self.timeout)
             except Exception:
@@ -305,11 +304,11 @@ class GoogleEnum(enumratorBaseThreaded):
 
     def extract_domains(self, resp):
         links_list = list()
-        link_regx = re.compile('<cite.*?>(.*?)<\/cite>')
+        link_regx = re.compile('<div class="BNeawe UPmit AP7Wnd">(.*?)<\/div>')
         try:
             links_list = link_regx.findall(resp)
             for link in links_list:
-                link = re.sub('<span.*>', '', link)
+                link = re.sub(u'\u203a.*', '', link)
                 if not link.startswith('http'):
                     link = "http://" + link
                 subdomain = urlparse.urlparse(link).netloc
@@ -406,7 +405,7 @@ class AskEnum(enumratorBaseThreaded):
 
     def extract_domains(self, resp):
         links_list = list()
-        link_regx = re.compile('<p class="web-result-url">(.*?)</p>')
+        link_regx = re.compile('<p class="PartialSearchResults-item-url">(.*?)<\/p>')
         try:
             links_list = link_regx.findall(resp)
             for link in links_list:
@@ -747,7 +746,7 @@ class ThreatCrowd(enumratorBaseThreaded):
 
     def req(self, url):
         try:
-            resp = self.session.get(url, headers=self.headers, timeout=self.timeout)
+            resp = self.session.get(url, headers=self.headers, timeout=self.timeout, proxies=self.proxy)
         except Exception:
             resp = None
 

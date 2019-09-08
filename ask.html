@@ -1,0 +1,1913 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+
+
+
+
+
+<meta name="robots" content="noindex, nofollow">
+
+<link REL="search" type="application/opensearchdescription+xml" HREF="//www.ask.com/ask-search.xml" title="Ask Search">
+
+<title>Ask.com - What&#39;s Your Question?</title>
+
+
+
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/s/0-4-10/site-ask-sites-askus-web-page.css"/>
+
+    <script>
+        var App = {};
+        App.events = [];
+
+        function loadEvent(fn,partial) {
+            App.events.push({
+                partial:partial || "",
+                contextSelector: document,
+                elementSelector: null,
+                type: "ready",
+                handler:fn
+            });
+        }
+        var $ = window.$||loadEvent;
+    </script>
+
+
+
+
+
+
+<script>
+    var googletag = googletag || {};
+    googletag.cmd = googletag.cmd || [];
+    googletag.cmd.push(function () {
+        googletag.pubads().disableInitialLoad();
+    });
+</script>
+<script type='text/javascript' src="//www.googletagservices.com/tag/js/gpt.js" async></script>
+
+
+<script>
+    window.deCfg = {
+        device: 'desktop',
+        post_id: '',
+        is_gallery: '',
+        is_gallery_excerpt:'',
+        is_gallery_content: '',
+        is_serp: '1',
+        page_number: '1',
+        page_total: '1',
+        country_code: 'us'
+    };
+</script>
+
+
+<script src="https://amg-cdn.novelty.media/iac/ask/nf.js" async ></script>
+<script src="https://amg-cdn.novelty.media/iac/ask/decfg.js" async ></script>
+
+
+
+
+
+
+<style>
+        .content-visible {
+            visibility: hidden;
+        }
+    </style>
+
+    <noscript>
+        <style type="text/css">
+            .content-visible {
+                visibility: visible !important;
+            }
+        </style>
+    </noscript>
+
+<script>
+    (function (G, o, O, g, L, e) {
+        G[g] = G[g] || function () {
+                    (G[g]['q'] = G[g]['q'] || []).push(arguments)
+                }, G[g]['t'] = 1 * new Date;
+        L = o.createElement(O), e = o.getElementsByTagName(O)[0];
+        L.async = 1;
+        L.src = '//www.google.com/adsense/search/async-ads.js';
+        e.parentNode.insertBefore(L, e)
+    })(window, document, 'script', '_googCsa');
+</script>
+
+<script>
+
+    var ask = (typeof ask === 'undefined') ? {} : ask;
+
+    ask.CSA = {};
+
+
+    ask.unified = ask.unified || {};
+    ask.unified.pending = ask.unified.pending || [];
+    ask.unified.pending.push("CSA");
+    ask.unified.pendingProviders = ask.unified.pendingProviders || {};
+
+    (function () {
+        var _logInConsole = false,
+                _csaStartTime = new Date(),
+                _csaResponseTime = null,
+                _domReady = false,
+                _showSerpTimeoutCleared = false,
+                _showSerpTimeoutLength = 3000,
+                _showSerpTimer = null,
+                _log = function () {
+                    if (false && window.console && console.log) {
+                        console.log(Array.prototype.slice.call(arguments));
+                    }
+                },
+
+                _domCallbacks = [],
+
+
+                _csaCallbacksObjects = [];
+
+
+        ask.CSA.startTime = _csaStartTime;
+        ask.CSA.responseReceived = false;
+        ask.CSA.adsShown = false;
+        ask.CSA.responseTime = null;
+        ask.CSA.adsShownTime = null;
+        ask.CSA.domReadyTime = null;
+        ask.CSA.serpShownTime = null;
+        ask.CSA.serpVisible = false;
+        ask.CSA.showSerpTimeoutFired = false;
+        ask.CSA.showSerpTimeoutLength = _showSerpTimeoutLength;
+        ask.CSA.showSerpStartTime = null;
+        ask.CSA.numTopAds = null;
+        ask.CSA.numMiddleAds = null;
+        ask.CSA.numBottomAds = null;
+        ask.CSA.adDepth = null;
+        ask.CSA.serpHiddenPreAds = null;
+        ask.CSA.serpShownPostAds = null;
+        ask.CSA.viewportHeight = null;
+        ask.CSA.viewportWidth = null;
+        ask.CSA.centerRailHeight = null;
+        ask.CSA.centerRailWidth = null;
+        ask.CSA.rightRailHeight = null;
+        ask.CSA.rightRailWidth = null;
+        ask.CSA.csaHeight = null;
+        ask.CSA.csaWidth = null;
+        ask.CSA.adContentRatio = null;
+        ask.CSA.calculateAdContentMetrics = null;
+
+
+
+        ask.CSA.addCSALoadCallback = function (adsCb, timeoutCb, timeoutValue) {
+            _log("addCSALoadCallback", adsCb, timeoutCb, timeoutValue);
+            var callbackObj = null;
+
+            if (typeof adsCb !== "function") {
+                return;
+            }
+
+            callbackObj = {adsCb: adsCb, timeoutCb: timeoutCb, timeoutValue: timeoutValue, timeout: null};
+
+            if (ask.CSA.adsShown) {
+
+                adsCb();
+            } else {
+
+                if (typeof timeoutCb === "function" && timeoutValue > 0) {
+
+                    callbackObj.timeout = setTimeout(function () {
+
+                        var idx = _csaCallbacksObjects.indexOf(callbackObj);
+                        if (idx > -1) {
+                            handleCallbackTimeout(callbackObj);
+                        }
+                    }, timeoutValue);
+
+                }
+
+
+                _csaCallbacksObjects.push(callbackObj);
+            }
+        };
+
+
+        ask.CSA.startShowSerpTimeout = function () {
+            _log("startShowSerpTimeout", _showSerpTimeoutLength);
+            _showSerpTimer = setTimeout(handleSerpTimeout, _showSerpTimeoutLength);
+            ask.CSA.showSerpStartTime = new Date() - _csaStartTime;
+        };
+
+
+        ask.CSA.domReady = function () {
+            _log("domReady");
+            _domReady = true;
+            ask.CSA.domReadyTime = new Date() - _csaStartTime;
+            invokeCallbacks(_domCallbacks);
+        };
+
+        ask.CSA.showSerp = makeSerpVisible;
+
+        ask.CSA.handleTopAdsLoaded = function (containerName, adsLoaded) {
+            _log("handleTopAdsLoaded " + adsLoaded);
+
+            addBackgroundColor(adsLoaded, containerName, ask.CSA.adblock1["colorBackground"]);
+
+            ask.CSA.adsShown = true;
+            ask.CSA.adsShownTime = new Date() - _csaStartTime;
+
+            makeSerpVisible();
+
+            fireCSACallbacks();
+        };
+
+        ask.CSA.handleNoTopAdsLoaded = noAdLoadedCallback;
+
+        ask.CSA.handleMiddleAdsLoaded = function (containerName, adsLoaded) {
+            _log("handleMiddleAdsLoaded " + adsLoaded);
+
+            addBackgroundColor(adsLoaded, containerName, ask.CSA.adblock3["colorBackground"]);
+        };
+
+        ask.CSA.handleNoMiddleAdsLoaded = noAdLoadedCallback;
+
+        ask.CSA.handleBottomAdsLoaded = function (containerName, adsLoaded) {
+            _log("handleBottomAdsLoaded " + adsLoaded);
+
+            addBackgroundColor(adsLoaded, containerName, ask.CSA.adblock2["colorBackground"]);
+        };
+
+        ask.CSA.handleNoBottomAdsLoaded = noAdLoadedCallback;
+
+        ask.CSA.handleCSAResponse = function (numAdsMap) {
+            _log("handleCSAResponse " + numAdsMap);
+
+
+            ask.CSA.responseTime = new Date() - _csaStartTime;
+
+
+            if (numAdsMap["text-ad-block-0"] != undefined) {
+                ask.CSA.numTopAds = numAdsMap["text-ad-block-0"];
+                ask.CSA.adDepth = ask.CSA.numTopAds;
+            }
+
+            if (numAdsMap["text-ad-block-2"] != undefined) {
+                ask.CSA.numMiddleAds = numAdsMap["text-ad-block-2"];
+            }
+
+            if (ask.CSA.adDepth < ask.CSA.numMiddleAds) {
+                ask.CSA.adDepth = ask.CSA.numMiddleAds;
+            }
+
+            if (numAdsMap["text-ad-block-1"] != undefined) {
+                ask.CSA.numBottomAds = numAdsMap["text-ad-block-1"];
+            }
+
+            if (ask.CSA.adDepth < ask.CSA.numBottomAds) {
+                ask.CSA.adDepth = ask.CSA.numBottomAds;
+            }
+
+            if (_domReady) {
+                processAdResponse();
+            } else {
+                _domCallbacks.push(processAdResponse);
+            }
+        };
+
+        function processAdResponse() {
+            _log("processAdResponse");
+
+            ask.CSA.responseReceived = true;
+
+
+            setCSAMetaDataCookie();
+
+
+}
+
+        function isSerpVisible() {
+
+            var visible = false,
+                    selectors = ["#midblock", "#rightblock", "#mobile-footer", ".mobile-web-results", ".hcsa", ".content-visible"],
+                    elems = null;
+
+            for (var i = 0; i < selectors.length; i++) {
+                if (visible) continue;
+
+                try {
+                    elems = document.querySelectorAll(selectors[i]);
+                } catch (e) {
+                    _log("Error fetching serp elements: " + e);
+                }
+
+                if (elems) {
+                    for (var j = 0; j < elems.length; j++) {
+                        visible = (visible || isVisible(elems[j]));
+                    }
+                }
+            }
+
+            return visible;
+        }
+
+        function isVisible(elem) {
+            var outOfFlow = (elem.offsetWidth !== 0 || elem.offsetHeight !== 0),
+                    invisible = false;
+            try {
+                invisible = (window.getComputedStyle(elem).getPropertyValue("visibility") === "hidden");
+            } catch (e) {
+                _log("Error getting style of elem: " + e);
+            }
+
+            return outOfFlow || invisible;
+        }
+
+        function makeSerpVisible() {
+            if (ask.CSA.serpVisible) return;
+            _log("makeSerpVisible");
+            var css = '#midblock,#rightblock,#mobile-footer,.mobile-web-results,.hcsa,.content-visible { visibility:visible;}';
+            var head = document.getElementsByTagName('head')[0];
+            var style = document.createElement('style');
+            style.type = 'text/css';
+            if (style.styleSheet) {
+                style.styleSheet.cssText = css;
+            } else {
+                style.appendChild(document.createTextNode(css));
+            }
+            head.appendChild(style);
+
+
+            if (!_showSerpTimeoutCleared) {
+                clearTimeout(_showSerpTimer);
+                _showSerpTimeoutCleared = true;
+            }
+
+            ask.CSA.serpVisible = true;
+            ask.CSA.serpShownTime = new Date() - _csaStartTime;
+        }
+
+
+        function setCSAMetaDataCookie() {
+            document.cookie = 'adDepth=' + ask.CSA.adDepth + ";path=/;domain=.ask.com";
+            document.cookie = 'ad_cnt=' + (ask.CSA.numTopAds + ask.CSA.numMiddleAds + ask.CSA.numBottomAds) + ";path=/;domain=.ask.com";
+        }
+
+        function updateMonitoringHash() {
+            _log("updateMonitoringHash");
+            var topAds = ask.CSA.numTopAds || 0,
+                    middleAds = ask.CSA.numMiddleAds || 0,
+                    bottomAds = ask.CSA.numBottomAds || 0,
+                    hash = "num_ads_top=" + topAds +
+                            "&num_ads_middle=" + middleAds +
+                            "&num_ads_bottom=" + bottomAds +
+                            "&total_num_ads=" + (topAds + middleAds + bottomAds) +
+                            "&content_hidden_pre_ads=" + (ask.CSA.serpHiddenPreAds ? 1 : 0) +
+                            "&content_shown_post_ads=" + (ask.CSA.serpShownPostAds ? 1 : 0) +
+                            "&ads_response_time_ms=" + ask.CSA.responseTime;
+            window.location.hash = hash;
+        }
+
+        function updateMonitoringElement() {
+            _log("updateMonitoringElement");
+            var topAds = ask.CSA.numTopAds || 0,
+                    middleAds = ask.CSA.numMiddleAds || 0,
+                    bottomAds = ask.CSA.numBottomAds || 0,
+                    body = document.getElementsByTagName("body")[0],
+                    elem = document.createElement("div");
+
+
+            elem.setAttribute("id", "csa-monitor-data");
+            elem.setAttribute("style", "visibility: hidden;");
+            elem.setAttribute("data-num_ads_top", topAds);
+            elem.setAttribute("data-num_ads_middle", middleAds);
+            elem.setAttribute("data-num_ads_bottom", bottomAds);
+            elem.setAttribute("data-total_num_ads", topAds + middleAds + bottomAds);
+            elem.setAttribute("data-content_hidden_pre_ads", ask.CSA.serpHiddenPreAds ? 1 : 0);
+            elem.setAttribute("data-content_shown_post_ads", ask.CSA.serpShownPostAds ? 1 : 0);
+            elem.setAttribute("data-ads_response_time_ms", ask.CSA.responseTime);
+
+
+            body.appendChild(elem);
+        }
+
+        function noAdLoadedCallback(containerName, adsLoaded) {
+            _log("noAdLoadedCallback");
+
+            function process() {
+                var adContainer = document.getElementById(containerName);
+
+                if (adContainer)
+                    adContainer.style.display = "none";
+
+                makeSerpVisible();
+            }
+
+            if (_domReady) {
+                process();
+            } else {
+                _domCallbacks.push(process);
+            }
+
+        }
+
+        function addBackgroundColor(adsLoaded, containerName, shadeSelector) {
+            var adElement = document.getElementById(containerName);
+            if (adElement) {
+                adElement.style.backgroundColor = shadeSelector;
+            }
+        }
+
+        function handleCallbackTimeout(callbackObj) {
+            _log("handleCallbackTimeout", callbackObj);
+            clearTimeout(callbackObj.timeout);
+            callbackObj.timeoutCb();
+        }
+
+        function handleSerpTimeout() {
+            _log("handleSerpTimeout");
+            makeSerpVisible();
+            ask.CSA.showSerpTimeoutFired = true;
+            _showSerpTimeoutCleared = true;
+        }
+
+        function fireCSACallbacks() {
+            _log("fireCSACallbacks");
+            var csaCallbacks = [];
+
+
+            for (var i = 0; i < _csaCallbacksObjects.length; i++) {
+                csaCallbacks.push(_csaCallbacksObjects[i].adsCb);
+                clearTimeout(_csaCallbacksObjects[i].timeout);
+            }
+
+
+            _csaCallbacksObjects = [];
+            _log("csaCallbacks: ", csaCallbacks);
+            invokeCallbacks(csaCallbacks);
+        }
+
+        function invokeCallbacks(callbacks) {
+            if (callbacks.length) {
+                for (var i = 0; i < callbacks.length; i++) {
+                    if (typeof callbacks[i] == "function") {
+                        _log("invoking callback " + i);
+                        try {
+                            callbacks[i].call(null);
+                        } catch (e) {
+
+                        }
+                    }
+                }
+
+                callbacks.splice(0, callbacks.length);
+            }
+        }
+
+        function formatClicktrackUrl(adBlock, adBlockName) {
+            var generatedClickTrackUrl;
+            if (!adBlock.clicktrackUrl && adBlock.clicktrackSearch && adBlockName) {
+                if (adBlockName === "topAdBlock") {
+                    generatedClickTrackUrl = "https://www.ask.com/web/_clk?qsrc=998&qo=&gclid=&askid=&isSemPixelEnabled=false&pl=%7B%22anuaafl%22%3A%220%22%2C%22anuadc%22%3A%22use1%22%2C%22anuaqs%22%3A%22%22%2C%22anxu%22%3A%22http%3A%2F%2Fwww.ask.com%2Fweb%3Fq%3Dsite%3Achinaamc.com%2520-www.chinaamc.com%26page%3D0%26qid%3D8D6EE6BF52E0C04527E51F64F22C4534%26o%3D0%26l%3Ddir%26qsrc%3D998%26qo%3Dpagination%22%2C%22anuaad%22%3A%22dirN%22%2C%22anuapbr%22%3A%22%22%2C%22anuaan%22%3A%22%22%2C%22anuaamt%22%3A%22%22%2C%22anuaagc%22%3A%22%22%2C%22anuaadid%22%3A%22%22%2C%22anuaptp%22%3A%22resultsPage%22%2C%22anuachl%22%3A%22web%22%2C%22anuasv%22%3A%22v1%22%2C%22anuaprdd%22%3A%22search%22%2C%22anxa%22%3A%22Archie_Askus%22%2C%22anxp%22%3A%22ask.com%22%2C%22anualcl%22%3A%22us%22%2C%22anuaapp%22%3A%22%7B%5C%22zoneName%5C%22%3A%5C%22center%5C%22%2C%5C%22moduleName%5C%22%3A%5C%22gslTop%5C%22%2C%5C%22providerSource%5C%22%3A%5C%22csa%5C%22%2C%5C%22resultType%5C%22%3A%5C%22gsl%5C%22%2C%5C%22metaInfo%5C%22%3A%7B%5C%22adType%5C%22%3A%5C%22csa%5C%22%2C%5C%22client%5C%22%3A%5C%22aj-cat-sp14%5C%22%2C%5C%22clientChannel%5C%22%3A%5C%22ud_desktop%2Corig_page%2Cask-non-dla%5C%22%7D%2C%5C%22pageViewId%5C%22%3A%5C%22be77d98272d3ffffbe65e57a59d37cb6%5C%22%2C%5C%22queryOrigination%5C%22%3A%5C%22pagination%5C%22%2C%5C%22templateId%5C%22%3A%5C%22desktop%5C%22%2C%5C%22queryTerm%5C%22%3A%5C%22site%3Achinaamc.com%20-www.chinaamc.com%5C%22%2C%5C%22category%5C%22%3A%5C%22Business%20%26%20Finance%5C%22%7D%22%2C%22anuapn%22%3A0%2C%22anuaptl%22%3A%22%22%7D&csaClick=true";
+                } else if (adBlockName === "middleAdBlock") {
+                    generatedClickTrackUrl = "";
+                } else {
+                    generatedClickTrackUrl = "https://www.ask.com/web/_clk?qsrc=998&qo=&gclid=&askid=&isSemPixelEnabled=false&pl=%7B%22anuaafl%22%3A%220%22%2C%22anuadc%22%3A%22use1%22%2C%22anuaqs%22%3A%22%22%2C%22anxu%22%3A%22http%3A%2F%2Fwww.ask.com%2Fweb%3Fq%3Dsite%3Achinaamc.com%2520-www.chinaamc.com%26page%3D0%26qid%3D8D6EE6BF52E0C04527E51F64F22C4534%26o%3D0%26l%3Ddir%26qsrc%3D998%26qo%3Dpagination%22%2C%22anuaad%22%3A%22dirN%22%2C%22anuapbr%22%3A%22%22%2C%22anuaan%22%3A%22%22%2C%22anuaamt%22%3A%22%22%2C%22anuaagc%22%3A%22%22%2C%22anuaadid%22%3A%22%22%2C%22anuaptp%22%3A%22resultsPage%22%2C%22anuachl%22%3A%22web%22%2C%22anuasv%22%3A%22v1%22%2C%22anuaprdd%22%3A%22search%22%2C%22anxa%22%3A%22Archie_Askus%22%2C%22anxp%22%3A%22ask.com%22%2C%22anualcl%22%3A%22us%22%2C%22anuaapp%22%3A%22%7B%5C%22zoneName%5C%22%3A%5C%22center%5C%22%2C%5C%22moduleName%5C%22%3A%5C%22gslBottom%5C%22%2C%5C%22providerSource%5C%22%3A%5C%22csa%5C%22%2C%5C%22resultType%5C%22%3A%5C%22gsl%5C%22%2C%5C%22metaInfo%5C%22%3A%7B%5C%22adType%5C%22%3A%5C%22csa%5C%22%2C%5C%22client%5C%22%3A%5C%22aj-cat-sp14%5C%22%2C%5C%22clientChannel%5C%22%3A%5C%22ud_desktop%2Corig_page%2Cask-non-dla%5C%22%7D%2C%5C%22pageViewId%5C%22%3A%5C%22be77d98272d3ffffbe65e57a59d37cb6%5C%22%2C%5C%22queryOrigination%5C%22%3A%5C%22pagination%5C%22%2C%5C%22templateId%5C%22%3A%5C%22desktop%5C%22%2C%5C%22queryTerm%5C%22%3A%5C%22site%3Achinaamc.com%20-www.chinaamc.com%5C%22%2C%5C%22category%5C%22%3A%5C%22Business%20%26%20Finance%5C%22%7D%22%2C%22anuapn%22%3A0%2C%22anuaptl%22%3A%22%22%7D&csaClick=true";
+                }
+
+                adBlock.clicktrackUrl = generatedClickTrackUrl;
+                delete adBlock.clicktrackSearch;
+            }
+            return adBlock;
+        }
+
+        _googCsa('jsLoadedCallback', function () {
+            var csaData = JSON.parse('{"pageOptions":{"pubId":"aj-cat-sp14","suspectClientID":"","firstShadowChannel":"","instantPreviews":false,"adPage":"1","attributionSpacingBelow":"7","location":false,"domainLinkAboveDescription":true,"adtest":"off","rightHandAttribution":false,"offerExtension":false,"hl":"en","oe":"utf-8","adsafe":"medium","isAndroidTablet":false,"ie":"utf-8","linkTarget":"_blank","clickToCall":false,"numRepeated":"4","sellerRatings":true,"siteLinks":true,"heightConstrained":false,"plusOnes":true,"styleId":"3664299758","channel":"ud_desktop,orig_page,ask-non-dla","query":"site:chinaamc.com -www.chinaamc.com"},"clickTrackUrlBase":"https://www.ask.com/web/_clk?","topAdBlock":{"colorAttribution":"#333333","colorDomainLink":"#0E7744","width":"99.5%","clickableBackgrounds":true,"colorText":"#333333","container":"text-ad-block-0","longerHeadlines":true,"colorBackground":"#FFFFFF","colorBorder":"#FFFFFF","colorAdSeparator":"#FFFFFF","maxTop":"5","fontSizeTitle":"18","fontSizeDescription":"13","fontSizeDomainLink":"14","fontSizeAttribution":"13","lineHeightTitle":"24","lineHeightDescription":"18","lineHeightDomainLink":"18","verticalSpacing":"16","detailedAttribution":true,"colorTitleLink":"#3300b5","clicktrackSearch":"qsrc=998&qo=&gclid=&askid=&isSemPixelEnabled=false&pl=%7B%22anuaafl%22%3A%220%22%2C%22anuadc%22%3A%22use1%22%2C%22anuaqs%22%3A%22%22%2C%22anxu%22%3A%22http%3A%2F%2Fwww.ask.com%2Fweb%3Fq%3Dsite%3Achinaamc.com%2520-www.chinaamc.com%26page%3D0%26qid%3D8D6EE6BF52E0C04527E51F64F22C4534%26o%3D0%26l%3Ddir%26qsrc%3D998%26qo%3Dpagination%22%2C%22anuaad%22%3A%22dirN%22%2C%22anuapbr%22%3A%22%22%2C%22anuaan%22%3A%22%22%2C%22anuaamt%22%3A%22%22%2C%22anuaagc%22%3A%22%22%2C%22anuaadid%22%3A%22%22%2C%22anuaptp%22%3A%22resultsPage%22%2C%22anuachl%22%3A%22web%22%2C%22anuasv%22%3A%22v1%22%2C%22anuaprdd%22%3A%22search%22%2C%22anxa%22%3A%22Archie_Askus%22%2C%22anxp%22%3A%22ask.com%22%2C%22anualcl%22%3A%22us%22%2C%22anuaapp%22%3A%22%7B%5C%22zoneName%5C%22%3A%5C%22center%5C%22%2C%5C%22moduleName%5C%22%3A%5C%22gslTop%5C%22%2C%5C%22providerSource%5C%22%3A%5C%22csa%5C%22%2C%5C%22resultType%5C%22%3A%5C%22gsl%5C%22%2C%5C%22metaInfo%5C%22%3A%7B%5C%22adType%5C%22%3A%5C%22csa%5C%22%2C%5C%22client%5C%22%3A%5C%22aj-cat-sp14%5C%22%2C%5C%22clientChannel%5C%22%3A%5C%22ud_desktop%2Corig_page%2Cask-non-dla%5C%22%7D%2C%5C%22pageViewId%5C%22%3A%5C%22be77d98272d3ffffbe65e57a59d37cb6%5C%22%2C%5C%22queryOrigination%5C%22%3A%5C%22pagination%5C%22%2C%5C%22templateId%5C%22%3A%5C%22desktop%5C%22%2C%5C%22queryTerm%5C%22%3A%5C%22site%3Achinaamc.com%20-www.chinaamc.com%5C%22%2C%5C%22category%5C%22%3A%5C%22Business%20%26%20Finance%5C%22%7D%22%2C%22anuapn%22%3A0%2C%22anuaptl%22%3A%22%22%7D&csaClick=true"},"bottomAdBlock":{"colorAttribution":"#333333","colorDomainLink":"#0E7744","width":"99.5%","clickableBackgrounds":true,"colorText":"#333333","container":"text-ad-block-1","longerHeadlines":true,"colorBackground":"#FFFFFF","colorAdSeparator":"#FFFFFF","colorBorder":"#FFFFFF","number":"4","fontSizeTitle":"18","fontSizeDescription":"13","fontSizeDomainLink":"14","fontSizeAttribution":"13","lineHeightTitle":"24","lineHeightDescription":"18","lineHeightDomainLink":"18","verticalSpacing":"16","detailedAttribution":true,"colorTitleLink":"#3300b5","clicktrackSearch":"qsrc=998&qo=&gclid=&askid=&isSemPixelEnabled=false&pl=%7B%22anuaafl%22%3A%220%22%2C%22anuadc%22%3A%22use1%22%2C%22anuaqs%22%3A%22%22%2C%22anxu%22%3A%22http%3A%2F%2Fwww.ask.com%2Fweb%3Fq%3Dsite%3Achinaamc.com%2520-www.chinaamc.com%26page%3D0%26qid%3D8D6EE6BF52E0C04527E51F64F22C4534%26o%3D0%26l%3Ddir%26qsrc%3D998%26qo%3Dpagination%22%2C%22anuaad%22%3A%22dirN%22%2C%22anuapbr%22%3A%22%22%2C%22anuaan%22%3A%22%22%2C%22anuaamt%22%3A%22%22%2C%22anuaagc%22%3A%22%22%2C%22anuaadid%22%3A%22%22%2C%22anuaptp%22%3A%22resultsPage%22%2C%22anuachl%22%3A%22web%22%2C%22anuasv%22%3A%22v1%22%2C%22anuaprdd%22%3A%22search%22%2C%22anxa%22%3A%22Archie_Askus%22%2C%22anxp%22%3A%22ask.com%22%2C%22anualcl%22%3A%22us%22%2C%22anuaapp%22%3A%22%7B%5C%22zoneName%5C%22%3A%5C%22center%5C%22%2C%5C%22moduleName%5C%22%3A%5C%22gslBottom%5C%22%2C%5C%22providerSource%5C%22%3A%5C%22csa%5C%22%2C%5C%22resultType%5C%22%3A%5C%22gsl%5C%22%2C%5C%22metaInfo%5C%22%3A%7B%5C%22adType%5C%22%3A%5C%22csa%5C%22%2C%5C%22client%5C%22%3A%5C%22aj-cat-sp14%5C%22%2C%5C%22clientChannel%5C%22%3A%5C%22ud_desktop%2Corig_page%2Cask-non-dla%5C%22%7D%2C%5C%22pageViewId%5C%22%3A%5C%22be77d98272d3ffffbe65e57a59d37cb6%5C%22%2C%5C%22queryOrigination%5C%22%3A%5C%22pagination%5C%22%2C%5C%22templateId%5C%22%3A%5C%22desktop%5C%22%2C%5C%22queryTerm%5C%22%3A%5C%22site%3Achinaamc.com%20-www.chinaamc.com%5C%22%2C%5C%22category%5C%22%3A%5C%22Business%20%26%20Finance%5C%22%7D%22%2C%22anuapn%22%3A0%2C%22anuaptl%22%3A%22%22%7D&csaClick=true"}}'),
+pageOptions = ask.CSA.pageOptions = csaData.pageOptions,
+                    csaArgs = ['ads'];
+
+            csaData.pageOptions.query = decodeURIComponent(csaData.pageOptions.query);
+
+            if (!pageOptions && csaData.topAdBlock) {
+                return;
+            }
+            pageOptions['adsResponseCallback'] = ask.CSA.handleCSAResponse;
+            csaArgs.push(pageOptions);
+
+            ask.CSA.adblock1 = formatClicktrackUrl(csaData.topAdBlock, "topAdBlock");
+            ask.CSA.adblock1['noAdLoadedCallback'] = ask.CSA.handleNoTopAdsLoaded;
+            ask.CSA.adblock1['adLoadedCallback'] = ask.CSA.handleTopAdsLoaded;
+            csaArgs.push(ask.CSA.adblock1);
+
+            if (ask.unified) {
+                var maxTop = parseInt(ask.CSA.adblock1.maxTop);
+                var adNumber = ask.CSA.adblock1.number ? parseInt(ask.CSA.adblock1.number) : 0;
+
+                ask.unified.pendingProviders["gsl"] = {
+                    "shadingHex": ask.CSA.adblock1.colorBackground ? ask.CSA.adblock1.colorBackground : "#FFFFFF",
+                    "client": pageOptions.pubId,
+                    "clientChannel": pageOptions.channel,
+                    "providerSource": "csa",
+                    "adRepeat": (pageOptions.numRepeated) ? true : false,
+                    "clickableSpace": ask.CSA.adblock1.clickableBackgrounds,
+                    "resultsReq": (maxTop > 0) ?  maxTop : adNumber,
+                    "timeout": ask.CSA.showSerpTimeoutLength ? ask.CSA.showSerpTimeoutLength : 0
+                };
+            }
+
+            if (csaData.middleAdBlock) {
+                ask.CSA.adblock3 = formatClicktrackUrl(csaData.middleAdBlock, "middleAdBlock");
+                ask.CSA.adblock3['noAdLoadedCallback'] = ask.CSA.handleNoMiddleAdsLoaded;
+                ask.CSA.adblock3['adLoadedCallback'] = ask.CSA.handleMiddleAdsLoaded;
+                csaArgs.push(ask.CSA.adblock3);
+
+                if (ask.unified) {
+                    ask.unified.pendingProviders["gsl"].resultsReq += parseInt(ask.CSA.adblock3.number);
+                }
+            }
+
+            if (csaData.bottomAdBlock) {
+                ask.CSA.adblock2 = formatClicktrackUrl(csaData.bottomAdBlock, "bottomAdBlock");
+                ask.CSA.adblock2['noAdLoadedCallback'] = ask.CSA.handleNoBottomAdsLoaded;
+                ask.CSA.adblock2['adLoadedCallback'] = ask.CSA.handleBottomAdsLoaded;
+                csaArgs.push(ask.CSA.adblock2);
+
+                if (ask.unified) {
+                    ask.unified.pendingProviders["gsl"].resultsReq += parseInt(ask.CSA.adblock2.number);
+                }
+            }
+
+            try {
+                _googCsa.apply(window, csaArgs);
+            } catch (err) {
+                ask.CSA.showSerp();
+            }
+        });
+    })();
+
+
+</script>
+
+<script>
+
+    if (App) {
+        ask.CSA.isDomReadyCalled = false;
+        (function () {
+            App.events = App.events || [];
+            App.events.push({
+                partial: "partial-text-ad-configuration",
+                contextSelector: document,
+                elementSelector: null,
+                type: "ready",
+                handler: function () {
+                    if (!ask.CSA.isDomReadyCalled) {
+                        ask.CSA.isDomReadyCalled = true;
+                        ask.CSA.domReady();
+                    }
+                }
+            });
+
+
+})();
+    }
+</script>
+
+
+
+
+
+
+<script>
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+            n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+                document,'script','https://connect.facebook.net/en_US/fbevents.js');
+
+
+
+fbq('init', '1236983599798824');
+
+fbq('track', 'PageView');
+
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+        var isDataLayerDefined = (typeof dataLayer !== "undefined");
+
+        var dataObj = {
+            "ldid": "",
+            "channel": "web",
+            "affiliateid": "",
+            "sessionid": "",
+            "acquisitiondivision": ""
+        };
+
+
+if (isDataLayerDefined) {
+            dataLayer.push(dataObj);
+        } else {
+            var dataLayer = [dataObj];
+        }
+
+    </script>
+
+
+    <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-T3KVMC" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer_temp'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T3KVMC');</script>
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+
+<div class="l-header">
+    <div class="l-header-container">
+
+
+
+<div class="PartialLogo js-PartialLogo">
+
+
+
+<div class="PartialLogo-image">
+            <a class="PartialLogo-link" href='/?o=0' data-unified='{"moduleName":"navTop","resultType":"navigation","providerSource":"navigation","zoneName":"header","moduleInZone":1,"resultInModule":1}' data-qo='logo' rel='nofollow'>Ask.com</a></div>
+
+</div>
+
+
+<div class="PartialSearchBox-wrapper ">
+    <div class="PartialSearchBox-container">
+        <form target="_top" action="/web" method="get" class="PartialSearchBox-form js-PartialSearchBox-form"
+              data-unified="{&quot;resultType&quot;:&quot;navigation&quot;,&quot;providerSource&quot;:&quot;navigation&quot;,&quot;zoneName&quot;:&quot;header&quot;,&quot;moduleName&quot;:&quot;searchBox&quot;,&quot;moduleInZone&quot;:2,&quot;resultInModule&quot;:1}">
+            <input type="hidden" id="origin" name="o" value="0">
+            <input type="hidden" id="partnerID" name="l" value="dir">
+            <input type="hidden" id="qo" name="qo" value="serpSearchTopBox">
+            <input class="PartialSearchBox-input js-PartialSearchBox-input js-PartialSearchBox-input-logo"
+                   data-zone="header" validate="required" value="site:chinaamc.com -www.chinaamc.com" name="q" autocomplete="off" maxlength="2048"
+                   placeholder="">
+            <button class="PartialSearchBox-button js-PartialSearchBox-button" type="submit">
+                <div class="PartialSearchBox-button-magnifier"></div>
+            </button>
+        </form>
+        <div class="PartialSearchBox-clear js-PartialSearchBox-clear"></div>
+    </div>
+</div>
+
+<script>
+    'use strict';
+    if (App) {
+        (function () {
+            App.events = App.events || [];
+            App.events.push(
+                    {
+                        partial: "PartialSearchBox",
+                        contextSelector: ".PartialSearchBox-wrapper",
+                        elementSelector: ".js-PartialSearchBox-form",
+                        type: "submit",
+                        handler: function (e) {
+                            var $searchTextInputBox = $(".js-PartialSearchBox-input", this);
+                            if (!$searchTextInputBox.val()) {
+                                return false;
+                            }
+                        }
+                    },
+                    {
+                        partial: "PartialSearchBox",
+                        contextSelector: ".PartialSearchBox-wrapper",
+                        elementSelector: ".PartialSearchBox-container",
+                        type: "submit",
+                        handler: function (e) {
+                            var topForm = $(".js-PartialSearchBox-form", this),
+                                    searchPayload = topForm.data("unified");
+
+                            if (!searchPayload) {
+                                return;
+                            }
+                            searchPayload.actionType = "click";
+                            searchPayload.assetType = "searchBox";
+                            topForm.unbind(e);
+                            e.preventDefault();
+                            if (ask && ask.unified){
+                                ask.unified.sendAction(searchPayload, function () {
+                                    topForm.submit();
+                                });
+                            } else {
+                                topForm.submit();
+                            }
+                        }
+                    },
+                    {
+                        partial: "PartialSearchBox",
+                        contextSelector: ".PartialSearchBox-wrapper",
+                        elementSelector: null,
+                        type: "ready",
+                        handler: function () {
+                            var input = $(".js-PartialSearchBox-input", this),
+                                    clear = $(".js-PartialSearchBox-clear", this);
+                            if (clear) {
+                                _searchUtil.searchBoxClear(input, clear);
+                            }
+                        }
+                    },
+                    {
+                        partial: "PartialSearchBox",
+                        contextSelector: ".PartialSearchBox-wrapper",
+                        elementSelector: ".js-PartialSearchBox-input",
+                        type: "keydown",
+                        handler: function (e) {
+                            e.stopPropagation();
+                        }
+                    }
+            );
+        })();
+    }
+</script>
+
+<div class="PartialChannelNavigation-nav-links">
+
+<ul>
+        <li class="active">
+
+Answers
+
+</li>
+        <li class="">
+            <span class="PartialChannelNavigation-nav-links-separator">|</span>
+            <a href='//www.ask.com/youtube?q=site%3Achinaamc.com+-www.chinaamc.com&page=0&qid=8D6EE6BF52E0C04527E51F64F22C4534&o=0&l=dir&qsrc=998&qo=channelNavigation' data-unified='{"moduleName":"navTop","resultType":"navigation","providerSource":"navigation","zoneName":"header","moduleInZone":3,"resultInModule":1}' rel='nofollow'>
+Videos
+</a>
+</li>
+    </ul>
+</div>
+
+
+
+</div>
+</div>
+
+<div class="main">
+    <div class="l-mid-content content-visible">
+        <div class="l-mid-container">
+
+
+
+
+
+
+
+
+
+
+
+<script>
+        var ask = ask || {};
+        ask.moduleOrdinals = ask.moduleOrdinals || [];
+        ask.moduleOrdinals.push(1);
+
+        if(typeof ask.CSA !== "undefined" && typeof ask.CSA.startShowSerpTimeout == "function"){
+            ask.CSA.startShowSerpTimeout();
+        }
+    </script>
+
+    <div class="TopAdsPartial">
+        <div id="text-ad-block-0" class="TopAdsPartial-text-ad-block"></div>
+    </div>
+
+
+
+
+
+
+<div class="PartialSearchResults-container">
+
+<div class="PartialSearchResults-title">Web Results</div>
+
+<div class="PartialSearchResults-body">
+
+
+
+
+
+
+
+
+
+<div class="PartialSearchResults-item" data-zen="true">
+
+<div class="PartialSearchResults-item-title">
+
+<a class="PartialSearchResults-item-title-link result-link"
+
+target="_blank" href='https://shequ.chinaamc.com/' data-unified='{"domain":"shequ.chinaamc.com","contentDesignation":"partner","moduleName":"webResults","resultType":"searchResult","providerSource":"delta","treatment":"standard","zoneName":"center","language":"","moduleInZone":2,"resultInModule":1}' rel='nofollow noopener noreferrer'>华夏财富社区</a>
+
+</div>
+
+<p class="PartialSearchResults-item-url">shequ.chinaamc.com</p>
+
+<p class="PartialSearchResults-item-abstract">华夏财富社区是华夏基金管理有限公司为华夏基金投资者建立的基于移动端的理财
+社区网站，致力于为投资者提供一个包容开放的基金投资和理财交流平台，同时提供
+&nbsp;...</p>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="PartialSearchResults-item" data-zen="true">
+
+<div class="PartialSearchResults-item-title">
+
+<a class="PartialSearchResults-item-title-link result-link"
+
+target="_blank" href='https://fund.chinaamc.com/capital/zczqhcpgg/zxhxsnyczczczxjh/' data-unified='{"domain":"fund.chinaamc.com","contentDesignation":"partner","moduleName":"webResults","resultType":"searchResult","providerSource":"delta","treatment":"standard","zoneName":"center","language":"","moduleInZone":2,"resultInModule":2}' rel='nofollow noopener noreferrer'>华夏资本</a>
+
+</div>
+
+<p class="PartialSearchResults-item-url">fund.chinaamc.com/capital/zczqhcpgg/zxhxsnyczczczxjh</p>
+
+<p class="PartialSearchResults-item-abstract">中信华夏苏宁云创资产支持专项计划 .中信华夏苏宁云创资产支持专项计划清算期间
+收支分配表... 2018-02-12 .北京市金杜律师事务所关于召开中信华夏苏宁云创资产&nbsp;...</p>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="PartialSearchResults-item" data-zen="true">
+
+<div class="PartialSearchResults-item-title">
+
+<a class="PartialSearchResults-item-title-link result-link"
+
+target="_blank" href='https://m.chinaamc.com/d' data-unified='{"domain":"m.chinaamc.com","contentDesignation":"partner","moduleName":"webResults","resultType":"searchResult","providerSource":"delta","treatment":"standard","zoneName":"center","language":"","moduleInZone":2,"resultInModule":3}' rel='nofollow noopener noreferrer'>华夏基金管家 - 腾讯</a>
+
+</div>
+
+<p class="PartialSearchResults-item-url">m.chinaamc.com/d</p>
+
+<p class="PartialSearchResults-item-abstract">2019年8月9日 ... 华夏基金管家是华夏基金管理有限公司推出的移动端基金理财工具，整合了活期通
+现金管理、资产查询、基金净值查询和交易等多种实用功能。</p>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="PartialSearchResults-item" data-zen="true">
+
+<div class="PartialSearchResults-item-title">
+
+<a class="PartialSearchResults-item-title-link result-link"
+
+target="_blank" href='https://fundtrade.chinaamc.com/wetrading/login' data-unified='{"domain":"fundtrade.chinaamc.com","contentDesignation":"partner","moduleName":"webResults","resultType":"searchResult","providerSource":"delta","treatment":"standard","zoneName":"center","language":"","moduleInZone":2,"resultInModule":4}' rel='nofollow noopener noreferrer'>华夏财富: 会员登录</a>
+
+</div>
+
+<p class="PartialSearchResults-item-url">fundtrade.chinaamc.com/wetrading/login</p>
+
+<p class="PartialSearchResults-item-abstract">华夏财富.</p>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="PartialSearchResults-item" data-zen="true">
+
+<div class="PartialSearchResults-item-title">
+
+<a class="PartialSearchResults-item-title-link result-link"
+
+target="_blank" href='https://fund.chinaamc.com/bangzhu/redianwenti/fuwu/1267548.shtml' data-unified='{"domain":"fund.chinaamc.com","contentDesignation":"partner","moduleName":"webResults","resultType":"searchResult","providerSource":"delta","treatment":"standard","zoneName":"center","language":"","moduleInZone":2,"resultInModule":5}' rel='nofollow noopener noreferrer'>基金服务类问题解答-热点问题- 华夏基金如何开立资产证明 ...</a>
+
+</div>
+
+<p class="PartialSearchResults-item-url">fund.chinaamc.com/bangzhu/redianwenti/fuwu/1267548.shtml</p>
+
+<p class="PartialSearchResults-item-abstract">2012年8月29日 ... 方法一：您可以通过华夏基金网站【网上查询】-【服务定制】-【资产证明】页面，在线
+申请资产证明，然后提供开户证件（二代身份证需正反面）复印件至我&nbsp;...</p>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="PartialSearchResults-item" data-zen="true">
+
+<div class="PartialSearchResults-item-title">
+
+<a class="PartialSearchResults-item-title-link result-link"
+
+target="_blank" href='https://fund.chinaamc.com/yanglaojijin/yanglao/beian/7802202.shtml' data-unified='{"domain":"fund.chinaamc.com","contentDesignation":"partner","moduleName":"webResults","resultType":"searchResult","providerSource":"delta","treatment":"standard","zoneName":"center","language":"","moduleInZone":2,"resultInModule":6}' rel='nofollow noopener noreferrer'>华夏基金延年益寿4号固定收益型养老金产品备案确认公告- 华夏 ...</a>
+
+</div>
+
+<p class="PartialSearchResults-item-url">fund.chinaamc.com/yanglaojijin/yanglao/beian/7802202.shtml</p>
+
+<p class="PartialSearchResults-item-abstract">2017年7月3日 ... 根据《企业年金基金管理办法》（人社部令第11号）、《关于企业年金养老金产品有关
+问题的通知》（人社部发〔2013〕24号）和有关规定，华夏基金&nbsp;...</p>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="PartialSearchResults-item" data-zen="true">
+
+<div class="PartialSearchResults-item-title">
+
+<a class="PartialSearchResults-item-title-link result-link"
+
+target="_blank" href='http://fund.chinaamc.com/bangzhu/redianwenti/chanpin/4746917.shtml' data-unified='{"domain":"fund.chinaamc.com","contentDesignation":"partner","moduleName":"webResults","resultType":"searchResult","providerSource":"delta","treatment":"standard","zoneName":"center","language":"","moduleInZone":2,"resultInModule":7}' rel='nofollow noopener noreferrer'>基金产品类问题解答-热点问题- 华夏基金假如提交认购华夏沪深 ...</a>
+
+</div>
+
+<p class="PartialSearchResults-item-url">fund.chinaamc.com/bangzhu/redianwenti/chanpin/4746917.shtml</p>
+
+<p class="PartialSearchResults-item-abstract">假如提交认购华夏沪深300指数增强基金申请后，又不想买了，能不能撤回来？ 时间
+：2015-01-20字体大小：大中小. 认购申请一经受理，不可撤销。 分享到： 新浪微博&nbsp;...</p>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="PartialSearchResults-item" data-zen="true">
+
+<div class="PartialSearchResults-item-title">
+
+<a class="PartialSearchResults-item-title-link result-link"
+
+target="_blank" href='https://fund.chinaamc.com/product/fundsTouzishouyijisuanqitwo.do' data-unified='{"domain":"fund.chinaamc.com","contentDesignation":"partner","moduleName":"webResults","resultType":"searchResult","providerSource":"delta","treatment":"standard","zoneName":"center","language":"","moduleInZone":2,"resultInModule":8}' rel='nofollow noopener noreferrer'>基金投资收益计算器-基金工具- 华夏基金</a>
+
+</div>
+
+<p class="PartialSearchResults-item-url">fund.chinaamc.com/product/fundsTouzishouyijisuanqitwo.do</p>
+
+<p class="PartialSearchResults-item-abstract">基金收益计算器. 定投体验计算器 &middot; 定投金额计算器 &middot; 定投收益计算器 &middot; 投资收益
+计算器. 交易费用计算器. 赎回费用计算 &middot; 网上交易认申购费用计算 &middot; 基金比较.</p>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="PartialSearchResults-item" data-zen="true">
+
+<div class="PartialSearchResults-item-title">
+
+<a class="PartialSearchResults-item-title-link result-link"
+
+target="_blank" href='http://fund.chinaamc.com/portal/cn/hxxc/yqlj/index.jsp' data-unified='{"domain":"fund.chinaamc.com","contentDesignation":"partner","moduleName":"webResults","resultType":"searchResult","providerSource":"delta","treatment":"standard","zoneName":"center","language":"","moduleInZone":2,"resultInModule":9}' rel='nofollow noopener noreferrer'>华夏基金管理有限公司</a>
+
+</div>
+
+<p class="PartialSearchResults-item-url">fund.chinaamc.com/portal/cn/hxxc/yqlj/index.jsp</p>
+
+<p class="PartialSearchResults-item-abstract">中国建设银行股份有限公司 &middot; 中国工商银行股份有限公司 &middot; 中国银行股份有限公司 &middot;
+交通银行股份有限公司 &middot; 中国农业银行 &middot; 招商银行股份有限公司 &middot; 上海浦东发展&nbsp;...</p>
+
+</div>
+
+
+
+
+</div>
+    </div>
+
+
+
+
+<script>
+        var ask = ask || {};
+        ask.moduleOrdinals = ask.moduleOrdinals || [];
+        ask.moduleOrdinals.push(3);
+    </script>
+
+    <div class="BottomAdsPartial">
+        <div id="text-ad-block-1" class="BottomAdsPartial-text-ad-block"></div>
+    </div>
+
+
+
+
+
+
+
+<ul class="PartialWebPagination ">
+
+
+<a href="/web?q=site%3Achinaamc.com%20-www.chinaamc.com&amp;page=1&amp;qid=8D6EE6BF52E0C04527E51F64F22C4534&amp;o=0&amp;l=dir&amp;qsrc=998&amp;qo=pagination">
+                            <li class="  PartialWebPagination-button">1</li>
+                        </a>
+
+<a href="/web?q=site%3Achinaamc.com%20-www.chinaamc.com&amp;page=2&amp;qid=8D6EE6BF52E0C04527E51F64F22C4534&amp;o=0&amp;l=dir&amp;qsrc=998&amp;qo=pagination">
+                            <li class="  PartialWebPagination-button">2</li>
+                        </a>
+
+<a href="/web?q=site%3Achinaamc.com%20-www.chinaamc.com&amp;page=3&amp;qid=8D6EE6BF52E0C04527E51F64F22C4534&amp;o=0&amp;l=dir&amp;qsrc=998&amp;qo=pagination">
+                            <li class="  PartialWebPagination-button">3</li>
+                        </a>
+
+<a href="/web?q=site%3Achinaamc.com%20-www.chinaamc.com&amp;page=4&amp;qid=8D6EE6BF52E0C04527E51F64F22C4534&amp;o=0&amp;l=dir&amp;qsrc=998&amp;qo=pagination">
+                            <li class="  PartialWebPagination-button">4</li>
+                        </a>
+
+<a href="/web?q=site%3Achinaamc.com%20-www.chinaamc.com&amp;page=5&amp;qid=8D6EE6BF52E0C04527E51F64F22C4534&amp;o=0&amp;l=dir&amp;qsrc=998&amp;qo=pagination">
+                            <li class="  PartialWebPagination-button">5</li>
+                        </a>
+
+
+<a href="/web?q=site%3Achinaamc.com%20-www.chinaamc.com&amp;page=1&amp;qid=8D6EE6BF52E0C04527E51F64F22C4534&amp;o=0&amp;l=dir&amp;qsrc=998&amp;qo=pagination">
+                            <li class="PartialWebPagination-next">Next</li>
+                        </a>
+
+</ul>
+
+
+
+
+
+
+
+
+</div>
+    </div>
+    <div class="l-right-content content-visible">
+
+
+
+
+<div class="PartialNoveltyAdSlot ad_placeholder   push-below-fold ">
+
+<div class="display-ad-anchor"></div>
+
+<div id="Ask_Search_D300x250_1" class="display-ad-block"></div>
+
+</div>
+
+
+
+<script>
+        'use strict';
+        if (App) {
+            (function () {
+                App.events = App.events || [];
+                App.events.push(
+                        {
+                            partial: "PartialNoveltyAdSlot push-below-fold",
+                            contextSelector: document,
+                            elementSelector: null,
+                            type: "ready",
+                            handler: function () {
+                                var breakpoint = 0;
+                                $(function () {
+                                    var moveDiv = function () {
+                                        var scrollTop = $(window).scrollTop();
+                                        var displayAdDiv = $(".push-below-fold .display-ad-block");
+                                        var divDisplayAdAnchor = displayAdDiv.offset().top;
+                                        var moveableDiv = $("#scroller");
+                                        var topPadding = 15;
+
+                                        var rsDivHeight,
+                                            adTopMargin,
+                                            divAnchor,
+                                            scrollerAnchor = $("#scroller-anchor");
+
+                                        if (scrollerAnchor && scrollerAnchor.offset()) {
+                                            divAnchor = scrollerAnchor.offset().top;
+                                        }
+
+                                        if (moveableDiv.length > 0) {
+                                            rsDivHeight = moveableDiv.height();
+                                        }
+
+                                        if (moveableDiv.length === 0) {
+                                            adTopMargin = (768 + topPadding);
+                                            displayAdDiv.css({
+                                                visibility: "visible",
+                                                position: "absolute",
+                                                margin: adTopMargin+"px 0 0 0"
+                                            });
+                                        } else if (scrollTop < 50) {
+                                            adTopMargin = (768 - (moveableDiv.height() + moveableDiv.offset().top + topPadding));
+                                            moveableDiv.css({visibility: "visible", position: "relative", top: "0"});
+                                            displayAdDiv.css({
+                                                visibility: "visible",
+                                                position: "absolute",
+                                                top: rsDivHeight,
+                                                margin: adTopMargin+"px 0 0 0"
+                                            });
+                                        } else if (scrollTop > divAnchor) {
+                                            moveableDiv.css({visibility: "visible", position: "fixed", top: "15px"});
+                                            if ((scrollTop + rsDivHeight) >= (divDisplayAdAnchor)) {
+                                                //setting the breakpoint
+                                                breakpoint = divDisplayAdAnchor;
+                                                displayAdDiv.css({
+                                                    visibility: "visible",
+                                                    position: "fixed",
+                                                    top: rsDivHeight,
+                                                    margin: "0 0 0 0"
+                                                });
+                                            } else if (divDisplayAdAnchor <= breakpoint) {
+                                                //reset the breakpoint
+                                                breakpoint = 0;
+                                                displayAdDiv.css({
+                                                    visibility: "visible",
+                                                    position: "absolute",
+                                                    top: rsDivHeight,
+                                                    margin: rsDivHeight+"px 0 0 0"
+                                                });
+                                            } else {
+
+                                            }
+                                        } else {
+                                            adTopMargin = (768 - (moveableDiv.height() + moveableDiv.offset().top + topPadding));
+                                            displayAdDiv.css({
+                                                visibility: "visible",
+                                                position: "absolute",
+                                                top: rsDivHeight,
+                                                margin: adTopMargin+"px 0 0 0"
+                                            });
+                                        }
+
+                                    };
+                                    $(window).scroll(moveDiv);
+                                    moveDiv();
+
+
+});
+                            }
+                        }
+                )
+            })();
+        }
+    </script>
+
+
+
+</div>
+</div>
+<div class="l-footer content-visible">
+    <div class="l-footer-container">
+
+
+
+
+<div class="PartialFooter-body">
+    <ul class="PartialFooter-list">
+
+
+<li class="PartialFooter-item">
+
+<a class="PartialFooter-item-link" target=_blank href='https://about.ask.com/' data-unified='{"moduleName":"navBottom","providerSource":"navigation","resultType":"navigation","zone":"footer","moduleInZone":1,"resultInModule":1}' data-qo='footerLinks' rel='nofollow'>About</a>
+
+</li>
+
+<li class="PartialFooter-item">
+
+<a class="PartialFooter-item-link"  href='/privacy' data-unified='{"moduleName":"navBottom","providerSource":"navigation","resultType":"navigation","zone":"footer","moduleInZone":1,"resultInModule":1}' data-qo='footerLinks' rel='nofollow'>Privacy</a>
+
+</li>
+
+<li class="PartialFooter-item">
+
+<a class="PartialFooter-item-link"  href='/terms' data-unified='{"moduleName":"navBottom","providerSource":"navigation","resultType":"navigation","zone":"footer","moduleInZone":1,"resultInModule":1}' data-qo='footerLinks' rel='nofollow'>Terms</a>
+
+</li>
+
+<li class="PartialFooter-item">
+
+<a class="PartialFooter-item-link"  href='/cookies' data-unified='{"moduleName":"navBottom","providerSource":"navigation","resultType":"navigation","zone":"footer","moduleInZone":1,"resultInModule":1}' data-qo='footerLinks' rel='nofollow'>Cookie Policy</a>
+
+</li>
+
+<li class="PartialFooter-item">
+
+<a class="PartialFooter-item-link" target=_blank href='https://www.askmediagroup.com/careers/' data-unified='{"moduleName":"navBottom","providerSource":"navigation","resultType":"navigation","zone":"footer","moduleInZone":1,"resultInModule":1}' data-qo='footerLinks' rel='nofollow'>Careers</a>
+
+</li>
+
+<li class="PartialFooter-item">
+
+<a class="PartialFooter-item-link" target=_blank href='https://help.askmediagroup.com/hc/en-us' data-unified='{"moduleName":"navBottom","providerSource":"navigation","resultType":"navigation","zone":"footer","moduleInZone":1,"resultInModule":1}' data-qo='footerLinks' rel='nofollow'>Help</a>
+
+</li>
+
+<li class="PartialFooter-item">
+
+<a class="PartialFooter-item-link" target=_blank href='https://help.askmediagroup.com/hc/en-us' data-unified='{"moduleName":"navBottom","providerSource":"navigation","resultType":"navigation","zone":"footer","moduleInZone":1,"resultInModule":1}' data-qo='footerLinks' rel='nofollow'>Feedback</a>
+
+</li>
+
+<li class="PartialFooter-item">
+            <span class="PartialFooter-item-label copyright">© 2019 Ask Media Group, LLC</span>
+        </li>
+    </ul>
+</div>
+
+
+
+
+
+</div>
+</div>
+<script src="/s/0-4-10/ask-page.min.js"></script>
+<script>
+    $(document).ready(function ($) {
+        var i, k, event, readyElementList;
+        if (typeof App.events === "object" && App.events.length) {
+            for (i = 0, k = App.events.length; i < k; i += 1) {
+                event = App.events[i];
+                if (event.type === "ready") {
+                    try {
+                        readyElementList = (event.elementSelector) ?
+                                $(event.elementSelector, event.contextSelector) :
+                                $(event.contextSelector);
+                        readyElementList.each(function (index) {
+                            event.handler.apply(this);
+                        });
+                    } catch (e) {
+                        console.error("Failed to run a 'ready' event handler.");
+                        console.error(e);
+                    }
+                } else {
+                    $(event.contextSelector).on(event.type, event.elementSelector || null, event.handler);
+                }
+            }
+        }
+    });
+</script>
+
+
+
+
+
+<script>
+        var _UnifiedApiParams = {"uniqueUser":"29EA0B96-C976-451D-B120-A6A84F2A6F29","appId":"Archie_Askus","appVersion":"9520973","appDate":"2019-09-05T19:59:24Z","logPageView":false,"updateSession":false,"domain":"ask.com","url":"www.ask.com/log/browser/event","backFillRequired":false,"eventId":"97E2E775-F809-40C3-8EC4-61F93B788E0C","maxSession":30,"suppressCookies":false,"cookieExpirationMinutes":129600,"newSessionOnDomainChange":false,"cookieName":"uc"};
+        _UnifiedApiParams.url = (("https:" === window.location.protocol)? "https://" : "http://" ) + _UnifiedApiParams.url;
+    </script>
+
+    <script src="/s/0-4-10/unified-api.min.js"></script>
+    <script>
+    if(App) {
+        (function () {
+            App.events = App.events || [];
+            App.events.push({
+                partial: "partial-unified-footer",
+                contextSelector: document,
+                elementSelector: null,
+                type: "ready",
+                handler: function () {
+                        window.ask = window.ask || {};
+                        var ask = window.ask;
+                        ask.unified = ask.unified || {};
+                        ask.unified.pageContext = {"anuaaf":"Archie","anxut":"UNIFIED","anuaci":"144.202.26.75","anuaafl":"0","anxsn":"ask-sites-2880278062-r5gjt","anuahm":"GET","anuadc":"use1","anuaqs":"q=site%3Achinaamc.com+-www.chinaamc.com&page=0&qid=8D6EE6BF52E0C04527E51F64F22C4534&o=0&l=dir&qsrc=998&qo=pagination","anxu":"http://www.ask.com/web?q=site:chinaamc.com%20-www.chinaamc.com&page=0&qid=8D6EE6BF52E0C04527E51F64F22C4534&o=0&l=dir&qsrc=998&qo=pagination","anuaad":"dirN","anuapbr":"","anuaan":"","anuaamt":"","anuaagc":"","anuaadid":"","ucctr":"","ucctn":"","ucs":"","ucdm":"","uccnt":"","ucpc":"","anuadtp":"desktop","anxbt":"Chrome","anxbv":"58.0.3029.110","anxpt":"Windows","anxpv":"7","anxcd":"","anxw":"800","anxh":"600","anxv":"9520973","anxd":"2019-09-05T19:59:24.400Z","anuaptp":"resultsPage","anuachl":"web","anuasv":"v1","anuaprdd":"search","anxa":"Archie_Askus","anxp":"ask.com","anualcl":"us","anuaapp":"{\"pageViewId\":\"be77d98272d3ffffbe65e57a59d37cb6\",\"queryOrigination\":\"pagination\",\"templateId\":\"desktop\",\"queryTerm\":\"site:chinaamc.com -www.chinaamc.com\",\"category\":\"Business & Finance\"}","anuapn":0,"anuaptl":"Ask.com - What&#39;s Your Question?","metaInfo":{"adType":"csa","client":"aj-cat-sp14","clientChannel":"ud_desktop,orig_page,ask-non-dla"}};
+                        ask.unified.payload = {
+                            pageResults: [],
+                            providers: ask.unified.pendingProviders || {}
+                        };
+
+                        if (ask.unified.pendingParams) {
+                            for (var key in ask.unified.pendingParams) {
+                                ask.unified.payload[key] = ask.unified.pendingParams[key];
+                            }
+                            ask.unified.pendingParams = {};
+                        }
+
+                        ask.unified.pendingProviders = {};
+                        ask.unified.events = [];
+
+
+                        ask.unified.addPresentation = function (zoneName, moduleName, moduleOrdinal, resultTemplate, count) {
+                            for (var i = 0; i < count; i++) {
+                                var nextResult = {};
+                                $.extend(nextResult, resultTemplate);
+                                nextResult.resultInModule = i + 1;
+                                nextResult.zoneName = zoneName;
+                                nextResult.moduleName = moduleName;
+                                nextResult.moduleInZone = moduleOrdinal;
+                                ask.unified.payload.pageResults.push(nextResult);
+                            }
+                        };
+
+                        ask.unified.addPresentationResult = function (results) {
+                            ask.unified.payload.pageResults = ask.unified.payload.pageResults.concat(results);
+                        };
+
+
+                        ask.unified.addProvider = function (providerName, providerPayload) {
+                            if (!ask.unified.payload.providers[providerName]) {
+                                ask.unified.payload.providers[providerName] = providerPayload;
+                            } else {
+                                $.extend(providerPayload, ask.unified.payload.providers[providerName]);
+                                ask.unified.payload.providers[providerName] = providerPayload;
+                            }
+                        };
+
+
+                        ask.unified.sendAction = function (actionPayload, cb) {
+                            var payload = {};
+                            $.extend(payload, ask.unified.pageContext);
+
+                            if(ask.unified.pageContext.anuaapp) {
+                                $.extend(actionPayload, JSON.parse(ask.unified.pageContext.anuaapp));
+                            }
+                            payload.anuaapp = JSON.stringify(actionPayload);
+
+                            if (!cb) {
+                                _UnifiedApi.logEvent("Action", payload, ask.unified.apiHandler);
+                            } else {
+                                var callback = function (success, response) {
+                                    ask.unified.apiHandler(success, response, function () {
+                                        cb();
+                                    });
+                                };
+                                _UnifiedApi.logEvent("Action", payload, callback);
+                            }
+                        };
+
+                        ask.unified.sendBackFill = function () {
+                            var navInfo = getNavigationTimingInfo(window);
+                            if(navInfo) {
+
+                                if (isNavInfoAvailableInUnifiedPayload()) {
+                                    if(isPageLoadComplete(navInfo)) {
+
+                                        if(ask.unified.payload.externalData.navInfo.loadEventEnd === 0) {
+
+                                            ask.unified.payload.externalData.navInfo = navInfo;
+                                        } else {
+
+                                            return;
+                                        }
+                                    } else {
+
+
+                                        registerSendBackFillOnPageLoadComplete();
+                                    }
+                                } else {
+                                    if(ask.unified.payload.externalData) {
+                                        ask.unified.payload.externalData.navInfo = navInfo;
+                                    } else {
+                                        ask.unified.payload.externalData = { "navInfo": navInfo };
+                                    }
+
+                                    if(!isPageLoadComplete(navInfo)) {
+
+
+                                        registerSendBackFillOnPageLoadComplete();
+                                    }
+                                }
+                            }
+
+                            var payload = { anxi: _UnifiedApiParams.eventId};
+                            $.extend(payload, ask.unified.pageContext);
+
+                            if ($.isEmptyObject(ask.unified.payload.providers)) {
+                                delete ask.unified.payload.providers;
+                            }
+                            payload.anuaapp = JSON.stringify(ask.unified.payload);
+
+                            _UnifiedApi.logEvent("BackFill", payload, ask.unified.apiHandler);
+
+
+                            ask.unified.payload = {
+                                pageResults: [],
+                                providers: {}
+                            };
+                        };
+
+                        function isPageLoadComplete(navInfo) {
+                            return navInfo.loadEventEnd > 0;
+                        }
+
+                        function isNavInfoAvailableInUnifiedPayload() {
+                            return !!ask.unified.payload.externalData && !!ask.unified.payload.externalData.navInfo;
+                        }
+
+                        function registerSendBackFillOnPageLoadComplete() {
+                            $(window).load(function(){
+                                setTimeout(function(){
+                                    ask.unified.sendBackFill();
+                                }, 0);
+                            });
+                        }
+
+
+                        ask.unified.cancelPending = function (key) {
+                            var length = ask.unified.pending.length;
+                            for (var i = 0; i < length; i++) {
+                                if (ask.unified.pending[i] === key) {
+                                    ask.unified.pending.splice(i, 1);
+                                    break;
+                                }
+                            }
+                        };
+
+
+                        ask.unified.apiHandler = function (success, responseText, cb) {
+
+if (cb) {
+                                cb();
+                            }
+                        };
+
+                        var _timedOut = false,
+                                _timeFromSerpStart = null,
+                                _adsLoggingTimeout = null,
+                                _dynamicLoggingTimeout = null;
+
+
+                        try {
+                            _timeFromSerpStart = ((new Date() - ask.CSA.startTime) - ask.CSA.showSerpStartTime);
+                            _adsLoggingTimeout = 3000 - _timeFromSerpStart;
+                            _dynamicLoggingTimeout = Math.max(_adsLoggingTimeout, 1);
+                        } catch (e) {
+                            _dynamicLoggingTimeout = 2000;
+                        }
+
+                        function mixinCSAAdData(payload) {
+                            var externalData = {
+                                csaInfo: {
+                                    domTime: ask.CSA.domReadyTime ? ask.CSA.domReadyTime : 0,
+                                    adsResponseTime: ask.CSA.responseTime ? ask.CSA.responseTime : 0,
+                                    adsShownTime: ask.CSA.adsShownTime ? ask.CSA.adsShownTime : 0,
+                                    serpShownTime: ask.CSA.serpShownTime ? ask.CSA.serpShownTime : 0,
+                                    supplement: _timedOut,
+                                    serpTimedOut: !!ask.CSA.showSerpTimeoutFired,
+                                    serpTimeoutStartTime: ask.CSA.showSerpStartTime ? ask.CSA.showSerpStartTime : 0,
+                                    dynamicTimeout: _dynamicLoggingTimeout,
+                                    viewportHeight: ask.CSA.viewportHeight ? ask.CSA.viewportHeight : 0,
+                                    viewportWidth: ask.CSA.viewportWidth ? ask.CSA.viewportWidth : 0,
+                                    adContentRatio: ask.CSA.adContentRatio ? ask.CSA.adContentRatio : 0,
+                                    csaHeight: ask.CSA.csaHeight ? ask.CSA.csaHeight : 0,
+                                    csaWidth: ask.CSA.csaWidth ? ask.CSA.csaWidth : 0,
+                                    centerRailHeight: ask.CSA.centerRailHeight ? ask.CSA.centerRailHeight : 0,
+                                    centerRailWidth: ask.CSA.centerRailWidth ? ask.CSA.centerRailWidth : 0,
+                                    rightRailHeight: ask.CSA.rightRailHeight ? ask.CSA.rightRailHeight : 0,
+                                    rightRailWidth: ask.CSA.rightRailWidth ? ask.CSA.rightRailWidth : 0
+                                }
+                            };
+
+                              var totalAds = 0,
+                                  topCount = 0,
+                                  midCount = 0,
+                                  botCount = 0,
+                                  uniqueResultsDisplayed = 0,
+                                  csaTopModule = "gslTop" || "csaTop",
+                                  csaMiddleModule = "" || "csaMiddle",
+                                  csaBottomModule = "gslBottom" || "csaBottom",
+                                  csaZone = "center" || "primary";
+
+                            if(ask.CSA.adModules){
+                                for(var i= 0; i < ask.CSA.adModules.length; i++){
+                                    var m = ask.CSA.adModules[i];
+                                    totalAds =+ m.count();
+                                    ask.unified.addPresentation(m.zoneName, m.moduleName, m.ordinal, {resultType: m.resultType, providerSource: m.providerSource}, m.count());
+                                }
+                                uniqueResultsDisplayed = ask.CSA.pageOptions.numRepeated ? ask.CSA.adModules[0].count() : totalAds;
+                            }
+                            else {
+                                topCount = ask.CSA.numTopAds ? ask.CSA.numTopAds : 0;
+                                midCount = ask.CSA.numMiddleAds ? ask.CSA.numMiddleAds : 0;
+                                botCount = ask.CSA.numBottomAds ? ask.CSA.numBottomAds : 0;
+                                totalAds = topCount + midCount + botCount;
+                                ask.unified.addPresentation(csaZone, csaTopModule, ask.moduleOrdinals[0], { resultType: "gsl", providerSource: "csa"}, topCount);
+                                ask.unified.addPresentation(csaZone, csaMiddleModule, ask.moduleOrdinals[1], {resultType: "gsl", providerSource: "csa"}, midCount);
+                                ask.unified.addPresentation(csaZone, csaBottomModule, ask.moduleOrdinals[2], {resultType: "gsl", providerSource: "csa"}, botCount);
+                                uniqueResultsDisplayed = ask.CSA.pageOptions.numRepeated ? (midCount + botCount) : totalAds;
+                            }
+
+                            if(csaZone === "center") {
+                                ask.unified.addProvider("gsl", {
+                                    zoneCenterResults: totalAds
+                                });
+                            } else {
+                                ask.unified.addProvider("gsl", {
+                                    zonePrimaryResults: totalAds
+                                });
+                            }
+
+                            ask.unified.addProvider("gsl", {
+                                responseTime: ask.CSA.responseTime ? ask.CSA.responseTime : 0,
+                                resultsDisplayed: totalAds,
+                                uniqueResultsDisplayed: uniqueResultsDisplayed
+                            });
+
+                            try {
+                                mixinNavigationTimingInfo(externalData);
+
+                                ask.unified.payload.externalData = externalData;
+                            } catch (e) {
+                            }
+                        };
+
+
+                        function mixinNavigationTimingInfo(eData) {
+                            var navInfo = getNavigationTimingInfo(window);
+                            if(navInfo) {
+                                eData["csaInfo"].csaStartTime = (ask.CSA.startTime.getTime() - navInfo.navigationStart);
+                            }
+                        };
+
+                        $(document).on("unified:BackFill", function (evt, data) {
+                            var ask = window.ask;
+                            if (data && data.payload) {
+                                ask.unified.addPresentationResult(data.payload);
+                                ask.unified.sendBackFill();
+                            }
+                        });
+
+                        if ("1" !== CookieUtil.getChipValue("uc", "nv")) {
+
+                            return;
+                        }
+
+                        if (ask.afc) {
+                            ask.unified.addProvider("gsl", ask.afc.provider);
+                            ask.unified.addPresentation.apply(null, ask.afc.presentation.top);
+                            ask.unified.addPresentation.apply(null, ask.afc.presentation.bottom);
+                            ask.unified.sendBackFill();
+                        } else if (!ask.unified.pending || ask.unified.pending.length == 0) {
+                            if(ask.unified.payload) {
+                                ask.unified.payload.suspectBackFill = true;
+                            } else {
+                                ask.unified.payload = { "suspectBackFill": true };
+                            }
+                            ask.unified.sendBackFill();
+                        } else if (ask.CSA && typeof ask.CSA.addCSALoadCallback === "function") {
+                            ask.CSA.addCSALoadCallback(function () {
+                                var payload = _timedOut ? { pl_supplement: true } : {};
+
+                                if (typeof ask.CSA.calculateAdContentMetrics === "function") {
+                                    ask.CSA.calculateAdContentMetrics();
+                                }
+
+                                mixinCSAAdData(payload);
+
+                                ask.unified.sendBackFill();
+                            }, function () {
+                                _timedOut = true;
+
+                                if (ask.CSA && typeof ask.CSA.showSerp === "function") {
+                                    ask.CSA.showSerp();
+                                }
+
+                                ask.unified.sendBackFill();
+                            }, _dynamicLoggingTimeout);
+                        }
+                    }
+                });
+
+                App.events.push({
+                    partial: "partial-unified-footer",
+                    contextSelector: document,
+                    elementSelector: "a",
+                    type: "click",
+                    handler: function(evt) {
+                        var ask = window.ask;
+                        var target = $(this);
+
+                        var unifiedData = target.data("unified");
+                        if(!unifiedData) {
+                            return;
+                        }
+
+                        var isImage = "img" === evt.target.tagName.toLowerCase();
+                        var assetType = target.data("unified-assettype") || (isImage ? "image" : "primaryTextLink");
+                        var destUrl = target.attr("href");
+                        var qoParam = target.data("qo");
+
+                        var appPayload = {
+                            actionType: "click",
+                            assetType: assetType,
+                            text: $.trim(target.text()).replace(/\s+/g, " "),
+                            url: destUrl
+                        };
+
+
+                        if(ask.unified.pageContext.metaInfo) {
+                            unifiedData.metaInfo = unifiedData.metaInfo || {};
+                            unifiedData.metaInfo.client = ask.unified.pageContext.metaInfo.client || "";
+                            unifiedData.metaInfo.clientChannel = ask.unified.pageContext.metaInfo.clientChannel || "";
+                        }
+
+
+                        if(unifiedData.imagePresent) {
+                            unifiedData.metaInfo = unifiedData.metaInfo || {};
+                            unifiedData.metaInfo.imagePresent = unifiedData.imagePresent;
+                            delete unifiedData.imagePresent;
+                        }
+
+                        $.extend(appPayload, unifiedData);
+
+
+var payload = {};
+                        $.extend(payload, ask.unified.pageContext);
+
+                        if(ask.unified.pageContext.anuaapp) {
+                            $.extend(appPayload, JSON.parse(ask.unified.pageContext.anuaapp));
+                        }
+
+                        var targetAttr = target.attr("target");
+                        var nonNav = assetType === "carouselClick" || assetType === "loadMore";
+
+
+payload.anuaapp = JSON.stringify(appPayload);
+
+                        if(targetAttr || nonNav) {
+                            _UnifiedApi.logEvent("Action", payload, ask.unified.apiHandler);
+                        } else {
+                            var callback = ask.unified.apiHandler;
+                            if (destUrl) {
+                                callback = function (success, response) {
+                                    ask.unified.apiHandler(success, response, function() {
+                                        destUrl = _UnifiedApi.addURLParam(destUrl, "qo", qoParam);
+                                        document.location = destUrl;
+                                    });
+                                };
+                            }
+                            _UnifiedApi.logEvent("Action", payload, callback);
+                            return false;
+                        }
+                    }
+                });
+        })();
+        }
+    </script>
+
+
+
+
+
+    <script>
+        var _comscore = _comscore || [];
+        _comscore.push(
+                { c1: "2", c2: "6034776" }
+        );
+        (function()
+                { var s = document.createElement("script"), el = document.getElementsByTagName("script")[0]; s.async = true; s.src = (document.location.protocol == "https:" ? "https://sb" : "http://b") + ".scorecardresearch.com/beacon.js"; el.parentNode.insertBefore(s, el); }
+        )();
+    </script>
+    <noscript>
+        <img src="//b.scorecardresearch.com/p?c1=2&c2=6034776&cv=2.0&cj=1" />
+    </noscript>
+
+
+
+
+<script>
+
+    var lssCfg = (function(){
+        return {
+            "topOffset": 7,
+            "leftOffset": 0,
+            "channel": "web",
+            "path": "web",
+            "disableTurnOffLink": "'true'",
+            "disableSS": false,
+            "server": "amg-ss.ask.com",
+            "serverPath": "/query",
+            "ldomain": "/",
+            "locale" : "en-US",
+            "limit" : 10,
+            "ssBold": "'false'",
+            "clearSearchHistory": "Clear search history",
+            "max": "",
+            "ssFromQueryHistory": "true",
+            "queryHistory": "",
+            "queryHistoryContentColor": "",
+            "ssContentColor": "'false'",
+            "ssContentColorCode": "",
+            "matchingTextUnBold": "",
+            "suggestionTextUnBold": "",
+            "ssItems": "",
+            "containerClass" : "ac_results",
+            "onSelect": function(data) {
+                if( ask && ask.unified && ask.unified.sendAction ){
+                    var assetType = (data.url.indexOf("searchHistory") !== -1)? "searchHistory" : "searchSuggestions",
+                            searchPayload = JSON.parse('{"resultType":"navigation","providerSource":"navigation","assetType":"searchBar","actionType":"click","zoneName":"header","moduleName":"searchBox"}');
+                    searchPayload.assetType = assetType;
+                    ask.unified.sendAction(searchPayload, function () {
+                        window.location.href = data.url;
+                    });
+                    return;
+                }
+                window.location.href = data.url;
+            }
+        };
+    })();
+
+    if(App) {
+        (function () {
+            App.events = App.events || [];
+            App.events.push({
+                partial: "PartialLss",
+                contextSelector: document,
+                elementSelector: null,
+                type: "ready",
+                handler: function () {
+                    if (!lssCfg.disableSS) {
+                        $("input[name=q]:first:not(:hidden)").lssSuggestions(lssCfg);
+                    }
+                }
+            });
+        })();
+    }
+</script>
+
+<script>
+
+getDocumentCookies = function () {
+        var theCookies = document.cookie.split(';'),
+                cookieObj = {},
+                tmp, tmpName, tmpVal;
+        for (var i = 1; i <= theCookies.length; i++) {
+            tmp = theCookies[i - 1].split('=');
+            if (tmp[0] !== undefined && tmp[1] !== undefined) {
+                tmpName = decodeURIComponent(tmp[0].trim());
+                tmpVal = decodeURIComponent(tmp[1].trim());
+                if (tmpName.indexOf('[') > -1 && tmpName.indexOf(']') > -1) {
+                    cookieObj[tmpName.split('[')[0]] = cookieObj[tmpName.split('[')[0]] || {};
+                    cookieObj[tmpName.split('[')[0]][tmpName.split('[')[1].replace(']', '')] = tmpVal;
+                } else {
+                    cookieObj[tmpName] = tmpVal;
+                }
+            }
+        }
+        return cookieObj;
+    };
+
+    function polling() {
+        var cks = getDocumentCookies();
+
+        for (var i in cks) {
+            var name = i;
+            var value = cks[i];
+
+            if (name.indexOf('csaClick') != -1 || name.indexOf('ypaClick') != -1) {
+
+
+
+if (typeof fbq === "function") {
+                        fbq('trackSingleCustom', '1236983599798824', 'PaidClick');
+                        var paidClickAd = (name.indexOf('csaClick') != -1)? 'PaidClickGoogle':'PaidClickYahoo';
+                        fbq('trackSingleCustom', '1236983599798824', paidClickAd);
+                    }
+
+
+
+
+
+
+document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            }
+        }
+        setTimeout(function () {
+            polling();
+        }, 25);
+    }
+
+    (function () {
+
+polling();
+    })();
+
+</script>
+
+
+
+
+
+
+
+<div id="shadow" style="height: 100%; display: none;"></div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
