@@ -42,7 +42,7 @@ try:
     requests.packages.urllib3.disable_warnings()
 except:
     pass
-
+ 
 # Check if we are running this on windows platform
 is_windows = sys.platform.startswith('win')
 
@@ -118,7 +118,7 @@ def write_file(filename, subdomains):
                 ips = myaddr[0][4][0]
             except:
                 ips = 'Unknown'
-            f.write(subdomain.ljust(30) + '\t' + ips + os.linesep)
+            f.write(subdomain.ljust(30) + '\t' + ips + '\n')
 
 
 def subdomain_sorting_key(hostname):
