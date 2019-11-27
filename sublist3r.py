@@ -3,6 +3,11 @@
 # Sublist3r v1.0
 # By Ahmed Aboul-Ela - twitter.com/aboul3la
 
+######      Output Format:
+## self.outfile.write(cur_sub_domain.ljust(30) + '\t' + ips + '\n')
+######
+
+
 # modules in standard library
 import re
 import sys
@@ -106,7 +111,14 @@ def write_file(filename, subdomains):
     print("%s[-] Saving results to file: %s%s%s%s" % (Y, W, R, filename, W))
     with open(str(filename), 'wt') as f:
         for subdomain in subdomains:
-            f.write(subdomain + os.linesep)
+        #    f.write(subdomain + os.linesep)
+        #   get every ips of subdomain
+            try:
+                myaddr = socket.getaddrinfo(subdomain, None)
+                ips = myaddr[0][4][0]
+            except:
+                ips = 'Unknown'
+            f.write(subdomain.ljust(30) + '\t' + ips + os.linesep)
 
 
 def subdomain_sorting_key(hostname):
