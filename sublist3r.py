@@ -103,6 +103,7 @@ def parse_args():
     parser.add_argument('-t', '--threads', help='Number of threads to use for subbrute bruteforce', type=int, default=30)
     parser.add_argument('-e', '--engines', help='Specify a comma-separated list of search engines')
     parser.add_argument('-o', '--output', help='Save the results to text file')
+    parser.add_argument("-d", "--detect", help="query domains by results, determine it is an public web application", type=bool, default=False)
     return parser.parse_args()
 
 
@@ -165,7 +166,7 @@ class enumratorBase(object):
               'Accept-Encoding': 'gzip',
           }
         self.print_banner()
-        self.proxy ={'http':'http://127.0.0.1:1080', 'https':'https://127.0.0.1:1080'}
+        self.proxy ={'http':'http://127.0.0.1:8889', 'https':'https://127.0.0.1:8889'}
 
     def print_(self, text):
         if not self.silent:
@@ -1018,10 +1019,14 @@ def interactive():
     enable_bruteforce = args.bruteforce
     verbose = args.verbose
     engines = args.engines
+    detect = args.detect
+    if detect:
+        pass
     if verbose or verbose is None:
         verbose = True
     banner()
     res = main(domain, threads, savefile, ports, silent=False, verbose=verbose, enable_bruteforce=enable_bruteforce, engines=engines)
+
 
 if __name__ == "__main__":
     interactive()

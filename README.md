@@ -9,6 +9,10 @@ Sublist3r is a python tool designed to enumerate subdomains of websites using OS
 ![Sublist3r](http://www.secgeek.net/images/Sublist3r.png "Sublist3r in action")
 
 
+## Modification
+
+根据请求的引擎不同，使用/不使用代理。
+
 ## Installation
 
 ```
