@@ -24,6 +24,7 @@ from collections import Counter
 
 # external modules
 from subbrute import subbrute
+from datahandler import datahandler
 import dns.resolver
 import requests
 
@@ -96,14 +97,15 @@ def parse_args():
     parser = argparse.ArgumentParser(epilog='\tExample: \r\npython ' + sys.argv[0] + " -d google.com")
     parser.error = parser_error
     parser._optionals.title = "OPTIONS"
-    parser.add_argument('-d', '--domain', help="Domain name to enumerate it's subdomains", required=True)
+    parser.add_argument('-d', '--domain', help="Domain name to enumerate it's subdomains", required=False)
     parser.add_argument('-b', '--bruteforce', help='Enable the subbrute bruteforce module', nargs='?', default=False)
     parser.add_argument('-p', '--ports', help='Scan the found subdomains against specified tcp ports')
     parser.add_argument('-v', '--verbose', help='Enable Verbosity and display results in realtime', nargs='?', default=False)
     parser.add_argument('-t', '--threads', help='Number of threads to use for subbrute bruteforce', type=int, default=30)
     parser.add_argument('-e', '--engines', help='Specify a comma-separated list of search engines')
     parser.add_argument('-o', '--output', help='Save the results to text file')
-    parser.add_argument("-d", "--detect", help="query domains by results, determine it is an public web application", type=bool, default=False)
+    parser.add_argument("-dt", "--detect", help="query domains by results, determine it is an public web application", type=str, default="result.txt")
+    parser.add_argument("-od", "--outods", help="associated with detect function, provide ods path to record", type=str, default="inform.ods")
     return parser.parse_args()
 
 
@@ -1019,13 +1021,17 @@ def interactive():
     enable_bruteforce = args.bruteforce
     verbose = args.verbose
     engines = args.engines
-    detect = args.detect
-    if detect:
-        pass
+    inlist = args.detect
+    outfile = args.outods
+    if inlist is not None:
+        detectServers(inlist, outfile)
     if verbose or verbose is None:
         verbose = True
     banner()
     res = main(domain, threads, savefile, ports, silent=False, verbose=verbose, enable_bruteforce=enable_bruteforce, engines=engines)
+
+def detectServers(infile, outfile):
+    datahandler.transform2excel(infile, outfile)
 
 
 if __name__ == "__main__":

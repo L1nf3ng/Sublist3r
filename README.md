@@ -4,6 +4,8 @@ Sublist3r is a python tool designed to enumerate subdomains of websites using OS
 
 [subbrute](https://github.com/TheRook/subbrute) was integrated with Sublist3r to increase the possibility of finding more subdomains using bruteforce with an improved wordlist. The credit goes to TheRook who is the author of subbrute.
 
+此工具主要依赖各个搜索平台的结果，优势在于肯定是历史上他人访问过的目标网址，准确率高；劣势在于无法探测较隐蔽的资产。
+
 ## Screenshots
 
 ![Sublist3r](http://www.secgeek.net/images/Sublist3r.png "Sublist3r in action")
@@ -11,7 +13,8 @@ Sublist3r is a python tool designed to enumerate subdomains of websites using OS
 
 ## Modification
 
-根据请求的引擎不同，使用/不使用代理。
+* 根据请求的引擎不同，使用/不使用代理。
+* 增加根据初步扫描结果，探测网站直接访问情况的能力，并将结果以ods文件存储。
 
 ## Installation
 
@@ -28,7 +31,7 @@ Sublist3r currently supports **Python 2** and **Python 3**.
 
 ## Dependencies:
 
-Sublist3r depends on the `requests`, `dnspython`, and `argparse` python modules.
+Sublist3r depends on the `requests`, `dnspython`, `beautifulsoup4`, `pyexcel_ods` and `argparse` python modules.
 
 These dependencies can be installed using the requirements file:
 
@@ -116,6 +119,8 @@ Short Form    | Long Form     | Description
 -e            | --engines     | Specify a comma-separated list of search engines
 -o            | --output      | Save the results to text file
 -h            | --help        | show the help message and exit
+-dt           | --detect      | detect webservers existence by result list
+-od           | --outods      | define ods path to store results with more information
 
 ### Examples
 
@@ -127,7 +132,8 @@ Short Form    | Long Form     | Description
 
 ``python sublist3r.py -d example.com``
 
-* To enumerate subdomains of specific domain and show only subdomains which have open ports 80 and 443 :
+* To enumerate subdomains of specific domain and show only subdomains which have open ports 80 and 443 ,
+* -p port scan use tcp connection to detect port opens or not :
 
 ``python sublist3r.py -d example.com -p 80,443``
 
@@ -142,6 +148,10 @@ Short Form    | Long Form     | Description
 * To enumerate subdomains and use specific engines such Google, Yahoo and Virustotal engines
 
 ``python sublist3r.py -e google,yahoo,virustotal -d example.com``
+
+* To generate an ods file with ip, domains, can be visited without vpn, html title information.
+
+``python sublist3r.py -dt results.txt -od inform.ods``
 
 
 ## Using Sublist3r as a module in your python scripts

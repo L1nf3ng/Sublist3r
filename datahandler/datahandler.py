@@ -1,6 +1,6 @@
 import collections
 import re
-from pyexcel_ods import get_data
+from detect.crawler import GetPageTitle
 from pyexcel_ods import save_data
 
 def output_excel(data, filename):
@@ -17,13 +17,20 @@ def transform2excel(filename, outfile):
     with open(filename) as file:
         origin = file.readlines()
 
-    headers = ["域名" , "IP地址", "外网公开"]
+    headers = ["域名" , "IP地址", "外网公开", "网页标题"]
     data = [ headers ]
 
     for line in origin:
         pattern = '(.*)\s+(.*)'
         tmp_res = re.search(pattern, line)
         domain, ip = tmp_res.group(1), tmp_res.group(2)
-        data.append([domain, ip , "Yes"])
-
+        url = "https://"+domain
+        code, title = GetPageTitle(url)
+        if code == 600:
+            outside = "Yes"
+        else:
+            outside = "No"
+        data.append([domain, ip , outside, title])
+    print("开始写入ods文件...")
     output_excel(data, outfile)
+
