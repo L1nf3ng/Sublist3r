@@ -2,3 +2,4 @@ argparse
 dnspython
 requests
 pyexcel_ods
+beautifulsoup4
