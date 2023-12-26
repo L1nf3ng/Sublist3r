@@ -21,15 +21,15 @@ def transform2excel(filename, outfile):
     data = [ headers ]
 
     for line in origin:
-        pattern = '(.*)\s+(.*)'
+        pattern = '(\S*)\s+\t?(.*)\n?'
         tmp_res = re.search(pattern, line)
-        domain, ip = tmp_res.group(1), tmp_res.group(2)
+        domain, ip = tmp_res.group(1).strip(), tmp_res.group(2).strip()
         url = "https://"+domain
         code, title = GetPageTitle(url)
         if code == 600:
-            outside = "Yes"
-        else:
             outside = "No"
+        else:
+            outside = "Yes"
         data.append([domain, ip , outside, title])
     print("开始写入ods文件...")
     output_excel(data, outfile)
